@@ -45,10 +45,11 @@ func TestRouter(t *testing.T) {
 	}
 
 	send := make(chan string)
+    stop := make(chan bool)
 	receive := make(chan Message, 1024)
-	failed := make(chan FailedSentence, 1024)
+	failed := make(chan error, 1024)
 
-	go Router(send, receive, failed)
+	go Router(send, receive, stop, failed)
 
 	for _, c := range cases {
 		for _, m := range c.sentence {
@@ -65,10 +66,11 @@ func TestRouter(t *testing.T) {
 
 func BenchmarkRouter(b *testing.B) {
 	send := make(chan string)
+    stop := make(chan bool)
 	receive := make(chan Message, 1024)
-	failed := make(chan FailedSentence, 1024)
+	failed := make(chan error, 1024)
 
-	go Router(send, receive, failed)
+	go Router(send, receive, stop, failed)
 
 	for i := 0; i < b.N; i++ {
 		if i%2 == 0 {
